@@ -186,7 +186,7 @@ temps=(QwenCoder-14B 0.2)
 - **Missing models**: Verify paths in `llmodels` and model filenames.
 - **GPU issues**: Reduce `gpulayers` values if VRAM limited.
 - **Context errors**: Lower `ctxsize` which competes for VRAM.
-- **Dependencies**: Ensure `llama.cpp` binaries and `xsel` are installed. Concerning `xsel`, the equivalent on systems with Wayland is `wcopy` and that should be installed.
+- **Dependencies**: Ensure `llama.cpp` binaries and `xsel` are installed. Concerning `xsel`, the equivalent on systems with Wayland is `wl-copy` and that should be installed.
 ## ToDo
 Create an installantion script.
 
