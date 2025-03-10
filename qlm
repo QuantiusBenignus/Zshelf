@@ -1,0 +1,56 @@
+#function qlm {
+#This function body is to be autoloaded, along with its completion companion _qlm.
+#Place this file in your fpath and `autoload -Uz qlm _qlm` from your .zshrc
+#or just 'autoload -Uz full/path/to/qlm (same for the completion function _qlm)
+#Do not forget to register the completion function in .zshrc with `compdef _qlm qlm`, (after compinit). 
+#The Large language model names and filenames to select from can be declared/added in qlm.cfg.
+
+#-----Local Configuration, adjust as/when needed:
+#local inference engine, assuming llama.cpp (`llam` is a symbolic link to `llama-cli`), options preset for it: 
+local inferengine='llam'
+#Location of local language models:
+#in $LLMDIR, used here and defined in .zshrc 
+#Default model name (a valid key in llmodels, defined in qlm.cfg) when no model name provided:
+local defaultllm="Qwen-14B"
+#We can fill this prompt file from other programs, or populate it with the (alias in .zshrc) function `promf`:
+#TPROMPTF='/dev/shm/promf'  DO NOT uncomment here: Used in other functions, so declared globally in .zshrc.
+#NOTE: If $1 and TPROMPTF don't exist, the code will look for any selected text and place it in the context.
+#-----End Local Configuration
+
+#Source model names and config. parameters:
+source $ZDOTDIR/.zfunc/qlm.cfg
+
+#This collects any (overriding) options that the user may want to pass directly to llama-cli
+#These must always be followed by "--" to delimit from model name and prompt, which will follow.
+local posit=${argv[(Ie)--]}
+if (( $posit )); then
+   local llamacli_opts=${argv:1:$posit-1} 
+   shift $(( $posit ))
+fi
+
+if [[ $# -gt 2 ]]; then
+    echo "Usage: $0 [-flags [args] -- ] [ModelName] ['Prompt']"
+    return 1 
+elif [[ $# -ge 1 ]]; then
+   # Check if the first argument is a valid LLM.
+   if [[ -n "${llmodels[$1]}" ]]; then
+       local choice=$1
+       shift 
+   else
+       # Raise an error and exit if not found and there are 2 command-line arguments:
+       [[ -n "$2" ]] && { echo "Error: '$1' is not a valid large language model." ; return 1 ; }
+       #If the only argument is not a model name, it must be a prompt. Load the default model:
+       local choice=$defaultllm
+   fi
+else
+   #No arguments. Load the default LLM:
+   local choice=$defaultllm
+fi
+
+(( 2 - ${#funcstack} )) && echo -e "${choice}\n" > /dev/shm/reqlm
+local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
+echo -e "${userinput}\n" >> /dev/shm/reqlm
+#The local inference engine (defined above) must be in the PATH.
+#The 'UIUIUI' placeholder is used to keep config in a single file, that is sourced on startup. 
+$inferengine -t 8 --temp $temps[$choice] -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup 2>/dev/null -c $ctxsize[$choice] -ngl $gpulayers[$choice] -s $(date +%s) ${1:+-no-cnv} -m $LLMDIR/$llmodels[$choice] -p "${${llmprompts[$choice]}/UIUIUI/$userinput}" ${(z)llamacli_opts} | tee -a /dev/shm/reqlm
+#}

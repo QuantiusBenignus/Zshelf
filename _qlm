@@ -1,0 +1,18 @@
+#function _qlm {
+#Completion function for qlm. After autoloading qlm and _qlm:
+#Do not forget to `compdef _qlm qlm` to register this completion function
+#The Large language model names and filenames are declared in qlm.cfg
+#Supports TAB completion on `qlm <TAB>...` or `qlm [-[-]{llama-cli override options} --] <TAB>...`
+  
+if (( ! ${+llmodels} )); then 
+    source $ZDOTDIR/.zfunc/qlm.cfg
+fi
+local llms=(${(k)llmodels})
+if (( CURRENT == 2 )) || ( (( CURRENT > 2 )) && [[ "${words[CURRENT-1]}" == "--" ]] ); then
+  # If the current word is the second word, or one following '--', provide completions from the array
+  compadd -S '' -M 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' "${llms[@]}"
+else
+  # For other words, allow any completion
+  _default
+fi
+#}

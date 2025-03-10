@@ -1,0 +1,13 @@
+#Function qwec, dedicated to Qwen2.5-Coder-14B-Instruct-Q5_K_L model
+#Usage: `qwec [-some llama-cli_opts --more llamacli_opts -- ] "Command-line Prompt"`
+#qwec () {
+    local posit=${argv[(Ie)--]}
+    if (( $posit )); then
+       local llamacli_opts=${argv:1:$posit-1} 
+       shift $(( $posit ))
+    fi
+    local defopts=(-t 8 --temp 0 -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c 4096 -ngl 99 -m $LLMDIR/Qwen2.5-Coder-14B-Instruct-Q5_K_L.gguf )
+    local userinput=${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)} 
+    echo -e "${userinput}\n" > /dev/shm/reqwec
+    llam ${(z)defopts} -s $(date +%s) ${1:+-no-cnv} -p "<|im_start|>system\nYou are Qwen Coder, created by Alibaba Cloud. You are a helpful coding assistant.<|im_end|>\n<|im_start|>user\nI have a coding request. $userinput<|im_end|>\n<|im_start|>assistant\n" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/reqwec ;
+#}

@@ -1,0 +1,19 @@
+#Function to (re)spond to previous one-shot LLM interactions (conversation of one-shot calls:-)
+#Using this: `reqlm 'Some follow up question?'` will invoke the context from a previous call to an LLM and add the new question.
+#Command-line back-and-forth need not be contiguous llm commands, e.g. `qlm 'What is 1+1'`, folowed by `ls -al`, followed by reqlm 'How about 2+2?' is allowed.
+#However, at high memomry pressure (low system memory) the cached pages may be evicted with time and performance of this back-and-forth will drop.
+#Otherwise, caching and COW (Copy On Write) memory management mechanisms of the system will make the calls to the same model used here an efficent affair.
+#See: https://github.com/ggml-org/llama.cpp/discussions/11357 for details on a slightly different approach.
+ 
+#reqlm() {
+    if [[ -f /dev/shm/reqlm ]]; then
+        local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
+        # If it is the multi-model qlm, we need the model name to call it again:
+        local llmname="$(head -n 1 /dev/shm/reqlm)"
+        qlm  $llmname "$(cat /dev/shm/reqlm)\n$1"
+        return 0
+    else
+        echo "No previous qlm calls found!"
+        return 1
+    fi
+#}

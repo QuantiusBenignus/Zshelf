@@ -1,0 +1,13 @@
+#Function mist, dedicated to Mistral-Small-24B-Instruct-2501-IQ4_XS model
+#Usage: `mist [-some llama-cli_opts --more llamacli_opts -- ] "Command-line Prompt"`
+#mist () {
+    local posit=${argv[(Ie)--]}
+    if (( $posit )); then
+       local llamacli_opts=${argv:1:$posit-1} 
+       shift $(( $posit ))
+    fi
+    local defopts=(-t 8 --temp 0 -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c 4096 -ngl 35 -m $LLMDIR/Mistral-Small-24B-Instruct-2501-IQ4_XS.gguf)
+    local userinput=${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)} 
+    echo -e "${userinput}\n" >> /dev/shm/remist
+    llam ${(z)defopts} -s $(date +%s) ${1:+-no-cnv} -p "[SYSTEM_PROMPT]You are Mistral Small 3, a Large Language Model created by Mistral AI. When you are not sure about some information, you say that you do not have the information.[/SYSTEM_PROMPT][INST]${userinput}[/INST]" 2>/dev/null ${(z)llamacli_opts} | tee -a /dev/shm/remist ;
+#}
