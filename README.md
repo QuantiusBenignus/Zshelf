@@ -1,4 +1,5 @@
 [Zshelf](https://github.com/quantiusbenignus/zshelf) is a Zsh-centric command-line interface for interacting with local Large Language Models (LLMs) using [llama.cpp](https://github.com/ggml-org/llama.cpp). It supports context persistence, model switching, and advanced prompt workflows, ingesting from the command line, files and mouse-selected text in any window. 
+
 Unique to this setup is the ability to have an itermittent one-shot conversations outside the isolated bubble of the lamma.cpp conversation mode. This is powerful because one can use the shell while interacting (and affect the interaction itself) with the local LLM. All the flexibility, power and programming logic of the zsh shell is thus available in this one-shot conversation mode. For example, one can loop through all locall LLM files with the same prompt and collect the results for comparison:
 
 ```
@@ -53,11 +54,10 @@ done
     # Create temp files (already set in code but can be adjusted)
     export TPROMPTF='/dev/shm/promf'
     export LLMDIR='/location/of/LLMfiles'
-	
-	  compdef _qlm qlm
-    ```
 
-    Please, reuse/check the supplied `.zshrc` for extra aliases, functions, and configuration related to this tool set.
+    compdef _qlm qlm
+    ```
+    IMPORTANT: Please, reuse/check the supplied `.zshrc` for extra aliases, functions, and configuration related to this tool set.
 
 ## Usage
 
@@ -96,8 +96,9 @@ Their response aliases (defined in `.zshrc` as anon. functions): `reqwec`, `reqw
 
 **Example**:
 ```bash
-qwec "Generate Python code for a Fibonacci sequence"
-reqwec 'Make it recursive'
+>> qwec "Generate Python code for a Fibonacci sequence"
+>> ls -al
+>> reqwec 'Make it recursive'
 ```
 
 ### Context Building with `promf`
