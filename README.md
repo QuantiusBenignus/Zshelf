@@ -39,7 +39,7 @@ done
 
 1. **Place files in Zsh function path**:
     ```bash
-	  git clone https://github.com/quantiusbenignus/zshelf
+	  git clone https://github.com/QuantiusBenignus/Zshelf.git
     mkdir -p ~/.zfunc
 	  cd zshelf  
     cp * ~/.zfunc/
@@ -48,6 +48,8 @@ done
 2. **Configure `.zshrc`**:
     ```zsh
     # Autoload functions and completion
+    #fpath=($ZDOTDIR/.zfunc $fpath)
+    fpath=(~/.zfunc $fpath)
     autoload -Uz qlm _qlm reqlm qwec qwen gem gem2 deeq mist 
 
     # Enables model name completion
@@ -55,9 +57,25 @@ done
     export TPROMPTF='/dev/shm/promf'
     export LLMDIR='/location/of/LLMfiles'
 
+    #This comes after compinit:
     compdef _qlm qlm
     ```
     IMPORTANT: Please, reuse/check the supplied `.zshrc` for extra aliases, functions, and configuration related to this tool set.
+All the response aliases/functions are defined in the sample .zshrc file:
+
+```
+LLM response aliases (anon. functions) to provide one-shot conversations with the corresponding models.
+#LLM inference functions gem, gem2, qwen, qwec, mist and deeq are defined in .zfunc, for autoloading:
+alias reqwen='() {[[ -f /dev/shm/reqwen ]] && qwen "$(cat /dev/shm/reqwen)\n$1" || print "No previous qwen calls found!" ; }'
+alias reqwec='() {[[ -f /dev/shm/reqwec ]] && qwec "$(cat /dev/shm/reqwec)\n$1" || print "No previous qwec calls found!" ; }'
+alias remist='() {[[ -f /dev/shm/remist ]] && mist "$(cat /dev/shm/remist)\n$1" || print "No previous mist calls found!" ; }'
+alias redeeq='() {[[ -f /dev/shm/redeeq ]] && deeq "$(cat /dev/shm/redeeq)\n$1" || print "No previous deeq calls found!" ; }'
+alias regem='() {[[ -f /dev/shm/regem ]] && gem "$(cat /dev/shm/regem)\n$1" || print "No previous gem calls found!" ; }'
+alias regem2='() {[[ -f /dev/shm/regem2 ]] && gem2 "$(cat /dev/shm/regem2)\n$1" || print "No previous gem2 calls found!" ; }'
+#Anon. function to populate LLM prompt file $TPROMPTF:
+alias promf='() {(( $# )) && {[[ -f $1 ]] && cat "$1" >> $TPROMPTF || {(( $#1 - 1 )) && echo -e $1 >> $TPROMPTF || rm $TPROMPTF ; } ; } || echo -e "$(xsel -op)\n" >> $TPROMPTF ; }'
+
+```
 
 ## Usage
 
