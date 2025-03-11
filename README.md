@@ -48,30 +48,32 @@ done
 ### Steps:
 
 1. **Place files in Zsh function path**:
-    ```bash
-	  git clone https://github.com/QuantiusBenignus/Zshelf.git
-    mkdir -p ~/.zfunc
-	  cd zshelf  
-    cp * ~/.zfunc/
+    ```zsh
+    git clone https://github.com/QuantiusBenignus/Zshelf.git
+    [[ -z "$ZDOTDIR" ]] && export ZDOTDIR="$HOME"
+    mkdir -p $ZDOTDIR/.zfunc   
+    cd zshelf  
+    cp * $ZDOTDIR/.zfunc/
     ```
 
 2. **Configure `.zshrc`**:
     ```zsh
-    # Autoload functions and completion
-    #fpath=($ZDOTDIR/.zfunc $fpath)
-    fpath=(~/.zfunc $fpath)
-    autoload -Uz qlm _qlm reqlm qwec qwen gem gem2 deeq mist 
+    #It would be best to set ZDOTDIR in your ~/.zshenv
+    if [[ -z "$ZDOTDIR" ]]; then
+        export ZDOTDIR="$HOME"
+    fi
 
+    fpath=($ZDOTDIR/.zfunc $fpath)
     # Enables model name completion
-    # Create temp files (already set in code but can be adjusted)
-    export TPROMPTF='/dev/shm/promf'
-    export LLMDIR='/location/of/LLMfiles'
+    
+    # Autoload functions and completion
+    autoload -Uz qlm _qlm reqlm qwec qwen gem gem2 deeq mist 
 
     #This comes after compinit:
     compdef _qlm qlm
     ```
-    IMPORTANT: Please, reuse/check the supplied `.zshrc` for extra aliases, functions, and configuration related to this tool set.
-All the response aliases/functions are defined in the sample .zshrc file:
+Please, check the bottom of supplied `.zshrc` for configuration related to this tool set.
+All the response aliases/functions are defined in the config file qlm.cfg:
 
 ```
 LLM response aliases (anon. functions) to provide one-shot conversations with the corresponding models.
@@ -96,7 +98,7 @@ alias promf='() {(( $# )) && {[[ -f $1 ]] && cat "$1" >> $TPROMPTF || {(( $#1 - 
 ❯❯qlm [-lammacli_opts --if_any -- ] <TAB>[ModelName] ["Prompt"]
 ```
 The command uses a custom zsh completion function to TAB-complete the model name from all available in the qlm.cfg file.
-The second form is when the user wants to add or override `llama-cli` options.  Everything before '--' will be passed to `llama-cli` AS IS.
+The second, optional form is when the user wants to add or override `llama-cli` options.  Everything before '--' will be passed to `llama-cli` AS IS.
 
 #### Scenarios:
 
@@ -109,7 +111,7 @@ The second form is when the user wants to add or override `llama-cli` options.  
 
 ### Dedicated Model Commands
 
-Pre-configured for specific models (use without model names):
+Pre-configured for specific, frequently-used models (use without model names):
 
 | Command | Model | Use Case |
 |---------|--------------------------------|------------------------------|
@@ -120,7 +122,7 @@ Pre-configured for specific models (use without model names):
 | `deeq` | DeepSeek-Qwen-14B | Advanced analysis |
 | `mist` | Mistral-Small-24B | Large context handling |
 
-Their response aliases (defined in `.zshrc` as anon. functions): `reqwec`, `reqwen`, `regem` etc.
+Their response aliases (defined in `qlm.cfg` as anon. functions): `reqwec`, `reqwen`, `regem` etc.
 
 **Example**:
 ```bash
@@ -142,10 +144,10 @@ The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
 # Direct input
 
 ❯❯promf
-# From selected text (via xsel)
+# From mouse-selected text (via xsel)
 
 ❯❯promf 0 #or any other single character
-#delete temprary prompt file
+#delete temporary prompt file
 ```
 
 **Workflow Example**:
@@ -171,7 +173,7 @@ Use `reqlm` or model-specific aliases to continue previous sessions:
 
 ## Configuration (qlm.cfg)
 
-Edit `~/.zfunc/qlm.cfg` to add models and parameters:
+Edit `.zfunc/qlm.cfg` to add models and parameters:
 
 ```bash
 # Example model entry
@@ -190,9 +192,9 @@ temps=(QwenCoder-14B 0.2)
 ## Features
 
 - **Zsh Completion**: Tab-complete model names when using `qlm`.
-- **Context Persistence**: Conversations saved in `/dev/shm/req*` files for resuming later with the same model.
+- **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same model.
 - **Flexible Input**: Prompts can come from command line, files, clipboard, or accumulated `promf` calls.
-- **Model-Specific Prompts**: Each model has optimized system instructions (see `llmprompts` in qlm.cfg).
+- **Model-Specific Prompts**: Each model has optimized system instructions (see preset values in qlm.cfg).
 
 ## Troubleshooting
 
