@@ -17,7 +17,6 @@ export HISTFILE="$ZDOTDIR/.zsh_history"
 export HISTSIZE=10000
 export SAVEHIST=10000
 
-fpath=($ZDOTDIR/.zfunc $fpath)
 #The next is an aggressive reduction in the elements of fpath, where entries have been removed as not needed.
 #Trim you fpath only if you are sure that you are not using functions from the directories removed from the fpath array.  
 #fpath=(
@@ -32,15 +31,6 @@ fpath=($ZDOTDIR/.zfunc $fpath)
 #/usr/share/zsh/functions/Zle)
 
 autoload -Uz compinit 
-#Those are the LLM manipulation functions
-autoload -Uz qlm _qlm reqlm
-autoload -Uz gem gem2 qwen qwec mist deeq
-
-#Local LLM prompt collection file $TPROMPTF, a temp file used for context ingestion and prompting:
-TPROMPTF='/dev/shm/promf'
-#Local LLM model directory (where you store all your LLMs, adjust as needed):
-#This is used in the LLM functions
-LLMDIR='$HOME/ML/Models'
 
 #Zsh command line PROMPT and RPROMPT vars:
 GITL=2
@@ -115,20 +105,9 @@ zstyle ':completion:*:*:*:*:*' verbose false
 alias ls='ls --color=auto --hyperlink=auto'
 alias la='ls -lahFtr --group-directories-first'
 alias sorf="find . -type f -printf '%s %p\n'| sort -hr | head -30"
-alias dud="du -d 1 -h --exclude={./anaconda,./sandbox,/proc,/sys,/dev,/run} | sort -h"
+alias dud="du -d 1 -h --exclude={/proc,/sys,/dev,/run} | sort -h"
 alias ipkgs='dpkg-query -W --showformat='${Installed-Size}\t${Package}\n' | sort -nr | less'
 alias hrep='() { fc -Dlim "*$@*" 1 }'
-
-#LLM response aliases (anon. functions) to provide one-shot conversations with the corresponding models.
-#LLM inference functions gem, gem2, qwen, qwec, mist and deeq are defined in .zfunc, for autoloading:
-alias reqwen='() {[[ -f /dev/shm/reqwen ]] && qwen "$(cat /dev/shm/reqwen)\n$1" || print "No previous qwen calls found!" ; }'
-alias reqwec='() {[[ -f /dev/shm/reqwec ]] && qwec "$(cat /dev/shm/reqwec)\n$1" || print "No previous qwec calls found!" ; }'
-alias remist='() {[[ -f /dev/shm/remist ]] && mist "$(cat /dev/shm/remist)\n$1" || print "No previous mist calls found!" ; }'
-alias redeeq='() {[[ -f /dev/shm/redeeq ]] && deeq "$(cat /dev/shm/redeeq)\n$1" || print "No previous deeq calls found!" ; }'
-alias regem='() {[[ -f /dev/shm/regem ]] && gem "$(cat /dev/shm/regem)\n$1" || print "No previous gem calls found!" ; }'
-alias regem2='() {[[ -f /dev/shm/regem2 ]] && gem2 "$(cat /dev/shm/regem2)\n$1" || print "No previous gem2 calls found!" ; }'
-#Anon. function to populate LLM prompt file $TPROMPTF:
-alias promf='() {(( $# )) && {[[ -f $1 ]] && cat "$1" >> $TPROMPTF || {(( $#1 - 1 )) && echo -e $1 >> $TPROMPTF || rm $TPROMPTF ; } ; } || echo -e "$(xsel -op)\n" >> $TPROMPTF ; }'
 
 #Extra aliases
 alias elias='source $ZDOTDIR/.ezshalias'
@@ -140,6 +119,11 @@ if [[ $(date +%s) -gt (( $(stat -c %Y $ZDOTDIR/.zcompdump.zwc ) + 36000 )) ]]; t
 else
    compinit -C
 fi
+
+fpath=($ZDOTDIR/.zfunc $fpath)
+#Those are the LLM manipulation functions
+autoload -Uz qlm _qlm reqlm
+autoload -Uz gem gem2 qwen qwec mist deeq
 #Register the LLM name completion (must be after compinit)
 compdef _qlm qlm
 
