@@ -15,10 +15,8 @@ Unique to this setup is the ability to have an itermittent one-shot conversation
 This is powerful because one can use the shell while interacting (and affect the interaction itself) with the local LLM. All the flexibility, power and programming logic of the zsh shell is thus available in this one-shot conversation mode. For example, one can loop through all locall LLM files with the same prompt and collect the results for comparison:
 
 ```
-# Define the prompt to be used for each model
 prompt="Explain the concept of quantum computing."
-
-# Loop through each model defined in llmodels
+# Loop through each model defined in llmodels (qlm.cfg)
 for model in "${(k)llmodels}"; do
     echo "Running model: $model"
     qlm "$model" "$prompt"
@@ -43,7 +41,7 @@ done
 ## Installation & Setup
 
 ### Requirements:
-- Zsh (configured with `compinit`)
+- Zsh (configured with `compinit` for the TAB competion of model names.)
 - [llama.cpp](https://github.com/ggml-org/llama.cpp) (`llam`/`llama-cli` in PATH)
 - `xsel` (or `wl-copy` on Wayland) for clipboard access (`sudo apt install xsel` on Linux)
 
@@ -94,10 +92,10 @@ alias promf='() {(( $# )) && {[[ -f $1 ]] && cat "$1" >> $TPROMPTF || {(( $#1 - 
 ### Core Command: `qlm` (Model-Agnostic)
 
 ```bash
-❯❯qlm [ModelName] ["Prompt"]
-❯❯qlm [-lammacli_opts --if_any -- ] [ModelName] ["Prompt"]
+❯❯qlm <TAB>[ModelName] ["Prompt"]
+❯❯qlm [-lammacli_opts --if_any -- ] <TAB>[ModelName] ["Prompt"]
 ```
-
+The command uses a custom zsh completion function to TAB-complete the model name from all available in the qlm.cfg file.
 The second form is when the user wants to add or override `llama-cli` options.  Everything before '--' will be passed to `llama-cli` AS IS.
 
 #### Scenarios:
@@ -145,6 +143,9 @@ The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
 
 ❯❯promf
 # From selected text (via xsel)
+
+❯❯promf 0 #or any other single character
+#delete temprary prompt file
 ```
 
 **Workflow Example**:
@@ -153,6 +154,7 @@ The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
 ❯❯promf data.txt # Add file content
 ❯❯promf # Append text selected with the mouse from a browser
 ❯❯qlm [ModelName] # Use accumulated context
+❯❯promf 1 #Clear context (empty file)
 ```
 
 ### Conversation Continuation
