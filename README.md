@@ -94,8 +94,8 @@ alias promf='() {(( $# )) && {[[ -f $1 ]] && cat "$1" >> $TPROMPTF || {(( $#1 - 
 ### Core Command: `qlm` (Model-Agnostic)
 
 ```bash
-qlm [ModelName] ["Prompt"]
-qlm [-lammacli_opts --if_any -- ] [ModelName] ["Prompt"]
+❯❯qlm [ModelName] ["Prompt"]
+❯❯qlm [-lammacli_opts --if_any -- ] [ModelName] ["Prompt"]
 ```
 
 The second form is when the user wants to add or override `llama-cli` options.  Everything before '--' will be passed to `llama-cli` AS IS.
@@ -126,9 +126,9 @@ Their response aliases (defined in `.zshrc` as anon. functions): `reqwec`, `reqw
 
 **Example**:
 ```bash
->> qwec "Generate Python code for a Fibonacci sequence"
->> ls -al
->> reqwec 'Make it recursive'
+❯❯qwec "Generate Python code for a Fibonacci sequence"
+❯❯ls -al
+❯❯reqwec 'Make it recursive'
 ```
 
 ### Context Building with `promf`
@@ -137,23 +137,22 @@ The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
 
 ```bash
 # Append content to the prompt file
-promf file.txt
-
+❯❯promf file.txt
 # From a file
-promf "Custom instruction"
 
+❯❯promf "Custom instruction"
 # Direct input
-promf
 
+❯❯promf
 # From selected text (via xsel)
 ```
 
 **Workflow Example**:
 ```bash
-promf "Context1" # Start building prompt
-promf data.txt # Add file content
-promf # Append text selected with the mouse from a browser
-qlm [ModelName] # Use accumulated context
+❯❯promf "Context1" # Start building prompt
+❯❯promf data.txt # Add file content
+❯❯promf # Append text selected with the mouse from a browser
+❯❯qlm [ModelName] # Use accumulated context
 ```
 
 ### Conversation Continuation
@@ -162,10 +161,10 @@ Use `reqlm` or model-specific aliases to continue previous sessions:
 
 ```bash
 # Continue last `qlm` session
-reqlm "Follow-up question?"
+❯❯reqlm "Follow-up question?"
 
 # Continue Qwen session
-reqwec "Next coding task?"
+❯❯reqwec "Next coding task?"
 ```
 
 ## Configuration (qlm.cfg)
@@ -199,6 +198,7 @@ temps=(QwenCoder-14B 0.2)
 - **GPU issues**: Reduce `gpulayers` values if VRAM limited.
 - **Context errors**: Lower `ctxsize` which competes for VRAM.
 - **Dependencies**: Ensure `llama.cpp` binaries and `xsel` are installed. Concerning `xsel`, the equivalent on systems with Wayland is `wl-copy` and that should be installed.
+
 ## ToDo
 Create an installantion script.
 
