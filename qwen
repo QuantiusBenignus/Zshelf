@@ -8,6 +8,6 @@
     fi
     local defopts=(-t 8 --temp 0 -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c 4096 -ngl 99 -m ~/Store/Models/Qwen2.5-14B-Instruct-Q5_K_L.gguf)
     local userinput=${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)} 
-    echo -e "${userinput}\n" >> /dev/shm/reqwen
+    echo -e "${userinput}\n" > /dev/shm/reqwen
     llam ${(z)defopts} -s $(date +%s) ${1:+-no-cnv} -p "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\n$userinput<|im_end|>\n<|im_start|>assistant\n" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/reqwen
 #}
