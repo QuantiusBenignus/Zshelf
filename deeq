@@ -8,6 +8,6 @@
     fi
     local defopts=(-t 8 --temp 0 -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c 4096 -ngl 99 -m $LLMDIR/DeepSeek-R1-Distill-Qwen-14B-Q5_K_L.gguf)
     local userinput=${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)} 
-    echo -e "${userinput}\n" >> /dev/shm/redeeq
+    echo -e "${userinput}\n" > /dev/shm/redeeq
     llam ${(z)defopts} -s $(date +%s) ${1:+-no-cnv} -p "<｜User｜>${userinput}<｜Assistant｜>" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/redeeq
 #}
