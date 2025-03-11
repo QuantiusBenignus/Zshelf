@@ -8,6 +8,6 @@
     fi
     local defopts=(-t 8 --temp 0 -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c 8192 -ngl 99 -m $LLMDIR/gemma-2-2b-it-abliterated-Q6_K_L.gguf)
     local userinput=${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)} 
-    echo -e "${userinput}\n" >> /dev/shm/regem2
+    echo -e "${userinput}\n" > /dev/shm/regem2
     llam ${(z)defopts} -s $(date +%s) ${1:+-no-cnv} -p "$userinput" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/regem2
 #}
