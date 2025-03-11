@@ -1,6 +1,17 @@
 [Zshelf](https://github.com/quantiusbenignus/zshelf) is a Zsh-centric command-line interface for interacting with local Large Language Models (LLMs) using [llama.cpp](https://github.com/ggml-org/llama.cpp). It supports context persistence, model switching, and advanced prompt workflows, ingesting from the command line, files and mouse-selected text in any window. 
 
-Unique to this setup is the ability to have an itermittent one-shot conversations outside the isolated bubble of the lamma.cpp conversation mode. This is powerful because one can use the shell while interacting (and affect the interaction itself) with the local LLM. All the flexibility, power and programming logic of the zsh shell is thus available in this one-shot conversation mode. For example, one can loop through all locall LLM files with the same prompt and collect the results for comparison:
+Unique to this setup is the ability to have an itermittent one-shot conversations outside the isolated bubble of the lamma.cpp conversation mode: 
+
+```
+mist 'Given the csv file sample I showed you, write a python function to convert it to binary format using the python struct.pack(). Pad all strings in the first column with zero bytes to a fixed length of 90 bytes.'
+ls -al *.bin
+remist 'Since the file is too big, we will rewrite the first column data as a byte with the string length, followed by the variable length string.'
+ls -al *.bin
+remist 'Good. Let us rewrite the function to first sort the data and then prepend an index with the offset and record length for each 1st character.'
+remist 'Change the code to write an integer (4 bytes) with the byte length of the index at teh begining of the file.'    
+```
+
+This is powerful because one can use the shell while interacting (and affect the interaction itself) with the local LLM. All the flexibility, power and programming logic of the zsh shell is thus available in this one-shot conversation mode. For example, one can loop through all locall LLM files with the same prompt and collect the results for comparison:
 
 ```
 # Define the prompt to be used for each model
