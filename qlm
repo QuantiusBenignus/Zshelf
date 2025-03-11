@@ -9,11 +9,11 @@
 #local inference engine, assuming llama.cpp (`llam` is a symbolic link to `llama-cli`), options preset for it: 
 local inferengine='llam'
 #Location of local language models:
-#in $LLMDIR, used here and defined in .zshrc 
+#in $LLMDIR, used here and defined in qlm.cfg 
 #Default model name (a valid key in llmodels, defined in qlm.cfg) when no model name provided:
 local defaultllm="Qwen-14B"
-#We can fill this prompt file from other programs, or populate it with the (alias in .zshrc) function `promf`:
-#TPROMPTF='/dev/shm/promf'  DO NOT uncomment here: Used in other functions, so declared globally in .zshrc.
+#We can fill this prompt file from other programs, or populate it with the (alias) function `promf`:
+#TPROMPTF='/dev/shm/promf'  DO NOT uncomment here: Used in other functions, so declared globally in qlm.cfg.
 #NOTE: If $1 and TPROMPTF don't exist, the code will look for any selected text and place it in the context.
 #-----End Local Configuration
 
