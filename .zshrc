@@ -17,6 +17,9 @@ export HISTFILE="$ZDOTDIR/.zsh_history"
 export HISTSIZE=10000
 export SAVEHIST=10000
 
+#This is for the LLM functions:
+export ZDOTDIR="${ZDOTDIR:-$HOME}"
+
 #The next is an aggressive reduction in the elements of fpath, where entries have been removed as not needed.
 #Trim you fpath only if you are sure that you are not using functions from the directories removed from the fpath array.  
 #fpath=(
