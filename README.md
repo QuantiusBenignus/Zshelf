@@ -27,6 +27,7 @@ done
 
 ## Table of Contents
 
+- [Features](#features)
 - [Installation & Setup](#installation--setup)
 - [Usage](#usage)
   - [Core Command: `qlm`](#core-command-qlm)
@@ -34,9 +35,15 @@ done
   - [Context Building with `promf`](#context-building-with-promf)
   - [Conversation Continuation](#conversation-continuation)
 - [Configuration](#configuration)
-- [Features](#features)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+
+## Features
+
+- **Zsh Completion**: Tab-complete model names when using `qlm`.
+- **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same model.
+- **Flexible Input**: Prompts can come from command line, files, clipboard, or accumulated `promf` calls.
+- **Model-Specific Prompts**: Each model has optimized system instructions (see preset values in qlm.cfg).
 
 ## Installation & Setup
 
@@ -174,13 +181,6 @@ gpulayers=(QwenCoder-14B 99)
 # Temperature (creativity)
 temps=(QwenCoder-14B 0.2)
 ```
-
-## Features
-
-- **Zsh Completion**: Tab-complete model names when using `qlm`.
-- **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same model.
-- **Flexible Input**: Prompts can come from command line, files, clipboard, or accumulated `promf` calls.
-- **Model-Specific Prompts**: Each model has optimized system instructions (see preset values in qlm.cfg).
 
 ## Troubleshooting
 
