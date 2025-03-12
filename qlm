@@ -13,12 +13,12 @@ local inferengine='llam'
 #Default model name (a valid key in llmodels, defined in qlm.cfg) when no model name provided:
 local defaultllm="Qwen-14B"
 #We can fill this prompt file from other programs, or populate it with the (alias) function `promf`:
-#TPROMPTF='/dev/shm/promf'  DO NOT uncomment here: Used in other functions, so declared globally in qlm.cfg.
+#DO NOT set $TPROMPTF here: Used in other functions, so declared globally in qlm.cfg.
 #NOTE: If $1 and TPROMPTF don't exist, the code will look for any selected text and place it in the context.
 #-----End Local Configuration
 
-#Source model names and config. parameters:
-source $ZDOTDIR/.zfunc/qlm.cfg
+#Source (if needed) model names and config. parameters:
+(( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
 
 #This collects any (overriding) options that the user may want to pass directly to llama-cli
 #These must always be followed by "--" to delimit from model name and prompt, which will follow.
