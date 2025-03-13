@@ -40,8 +40,8 @@ done
 
 ## Features
 
-- **Zsh Completion**: Tab-complete model names when using `qlm`.
-- **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same model.
+- **Zsh Completion**: Tab-complete model names when using `qlm` or `reqlm`.
+- **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same (or new, with reqlm)  model.
 - **Flexible Input**: Prompts can come from command line, files, clipboard, or accumulated `promf` calls.
 - **Model-Specific Prompts**: Each model has optimized system instructions (see preset values in qlm.cfg).
 
@@ -89,6 +89,9 @@ All the response aliases/functions are defined in the config file qlm.cfg.
 ```bash
 ❯❯qlm <TAB>[ModelName] ["Prompt"]
 ❯❯qlm [-lammacli_opts --if_any -- ] <TAB>[ModelName] ["Prompt"]
+❯❯#Continue the same conversation (possibly with a new model):
+❯❯reqlm <TAB>[ModelName] ["New Prompt"]
+
 ```
 The command uses a custom zsh completion function to TAB-complete the model name from all available in the qlm.cfg file.
 The second, optional form is when the user wants to add or override `llama-cli` options.  Everything before '--' will be passed to `llama-cli` AS IS.
@@ -157,8 +160,8 @@ The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
 Use `reqlm` or model-specific aliases to continue previous sessions:
 
 ```bash
-# Continue last `qlm` session
-❯❯reqlm "Follow-up question?"
+# Continue last `qlm` session (can change model)
+❯❯reqlm <TAB>[New LLM] "Follow-up question?"
 
 # Continue Qwen session
 ❯❯reqwec "Next coding task?"
@@ -190,7 +193,7 @@ temps=(QwenCoder-14B 0.2)
 - **Dependencies**: Ensure `llama.cpp` binaries and `xsel` are installed. Concerning `xsel`, the equivalent on systems with Wayland is `wl-copy` and that should be installed.
 
 ## ToDo
-Create an installantion script.
+Create an installation script.
 
 ## Contributing
 
