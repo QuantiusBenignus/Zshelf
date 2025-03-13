@@ -1,16 +1,32 @@
 #Function to (re)spond to previous one-shot LLM interactions (conversation of one-shot calls:-)
 #Using this: `reqlm 'Some follow up question?'` will invoke the context from a previous call to an LLM and add the new question.
+#Switching the model between turns is allowed (and modelname <TAB> completion works on reqlm too): `reqlm Gemma2-9B 'Follow up question?'`
 #Command-line back-and-forth need not be contiguous llm commands, e.g. `qlm 'What is 1+1'`, folowed by `ls -al`, followed by reqlm 'How about 2+2?' is allowed.
-#However, at high memomry pressure (low system memory) the cached pages may be evicted with time and performance of this back-and-forth will drop.
+#However, at high memory pressure (low system memory) the cached pages may be evicted with time and performance of this back-and-forth will drop.
 #Otherwise, caching and COW (Copy On Write) memory management mechanisms of the system will make the calls to the same model used here an efficent affair.
 #See: https://github.com/ggml-org/llama.cpp/discussions/11357 for details on a slightly different approach.
  
 #reqlm() {
     if [[ -f /dev/shm/reqlm ]]; then
-        local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
-        # If it is the multi-model qlm, we need the model name to call it again:
-        local llmname="$(head -n 1 /dev/shm/reqlm)"
-        qlm  $llmname "$(cat /dev/shm/reqlm)\n$1"
+        if [[ $# -le 2 ]]; then
+            (( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
+            # Check if the first argument is a valid LLM.
+            if [[ -n "${llmodels[$1]}" ]]; then
+                #We switch the model between calls: 
+                local llmname="$1"
+                shift 
+            else
+                # Raise an error and exit if not found and there are 2 command-line arguments:
+                [[ -n "$2" ]] && { echo "Error: '$1' is not a valid large language model." ; return 1 ; }
+                #If the only argument is not a model name, it must be a prompt. Load the previous model.
+                local llmname=$(< $lastllmf)
+            fi                      
+        else    
+            echo "Usage: $0 [ModelName] ['Prompt']"
+            return 1 
+        fi
+        local userinput="$(cat /dev/shm/reqlm)\n${1:-$(xsel -op)}"
+        qlm $llmname "${userinput}"
         return 0
     else
         echo "No previous qlm calls found!"
