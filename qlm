@@ -42,7 +42,7 @@ local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
 
 #The local inference engine (defined above) must be in the PATH.
 #The 'UIUIUI' placeholder is used to keep config in a single file, that is sourced on startup.
-$inferengine -t 8 --temp $temps[$choice] -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c $ctxsize[$choice] -ngl $gpulayers[$choice] -s $(date +%s) ${1:+-no-cnv} -m $modeldir/$llmodels[$choice] -p "${llmprompts[$choice]//UIUIUI/"${userinput}"}" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/reqlm
+$inferengine -t 8 --temp $temps[$choice] -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c $ctxsize[$choice] -ngl $gpulayers[$choice] -s $(date +%s) ${1:+-no-cnv} -m $LLMDIR/$llmodels[$choice] -p "${llmprompts[$choice]//UIUIUI/"${userinput}"}" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/reqlm
 
 #}
 
