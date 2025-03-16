@@ -48,7 +48,7 @@ done
 ## Installation & Setup
 
 ### Requirements:
-- Zsh (configured with `compinit` for the TAB competion of model names.)
+- Zsh (configured with `compinit` for the TAB completion of model names.)
 - [llama.cpp](https://github.com/ggml-org/llama.cpp) (`llam`/`llama-cli` in PATH)
 - `xsel` (or `wl-copy` on Wayland) for clipboard access (`sudo apt install xsel` on Linux)
 
