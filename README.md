@@ -74,7 +74,7 @@ done
     # Enables model name completion
     
     # Autoload functions and completion
-    autoload -Uz qlm _qlm reqlm qwec qwen gem gem2 deeq mist 
+    autoload -Uz qlm _qlm promf reqlm qwec qwen gem gem2 deeq mist 
 
     #This comes after compinit:
     compdef _qlm qlm
@@ -135,14 +135,16 @@ The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
 # Append content to the prompt file
 ❯❯promf file.txt
 # From a file
-
 ❯❯promf "Custom instruction"
 # Direct input
-
 ❯❯promf
 # From mouse-selected text (via xsel)
+❯❯promf l 
+#list contents of prompt file directory
+❯❯promf c 
+#display contents of prompt file
 
-❯❯promf 0 #or any other single character
+❯❯promf 0 #or any other single character different from 'l' or 'c'
 #delete temporary prompt file
 ```
 
