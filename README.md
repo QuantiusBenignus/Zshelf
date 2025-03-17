@@ -40,15 +40,15 @@ done
 
 ## Features
 
-- **Zsh Completion**: Tab-complete model names when using `qlm` or `reqlm`.
+- **Zsh Completion**: Tab-complete model names (and optional llama-cli flags and options) when using `qlm` or `reqlm`.
 - **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same (or new, with reqlm)  model.
-- **Flexible Input**: Prompts can come from command line, files, clipboard, or accumulated `promf` calls.
-- **Model-Specific Prompts**: Each model has optimized system instructions (see preset values in qlm.cfg).
+- **Flexible Input**: Prompts can come from command line, files, clipboard, or can be constructed using `promf`.
+- **Model-Specific Prompts**: Each model has optimized (overrideable) system instructions (see preset values in qlm.cfg).
 
 ## Installation & Setup
 
 ### Requirements:
-- Zsh (configured with `compinit` for the TAB completion of model names.)
+- Zsh (configured with `compinit` for the TAB completion of model names and options.)
 - [llama.cpp](https://github.com/ggml-org/llama.cpp) (`llam`/`llama-cli` in PATH)
 - `xsel` (or `wl-copy` on Wayland) for clipboard access (`sudo apt install xsel` on Linux)
 
@@ -57,7 +57,7 @@ done
 1. **Place files in Zsh function path**:
     ```zsh
     git clone https://github.com/QuantiusBenignus/Zshelf.git
-    [[ -z "$ZDOTDIR" ]] && export ZDOTDIR="$HOME"
+    export ZDOTDIR=${ZDOTDIR:-$HOME}
     mkdir -p $ZDOTDIR/.zfunc   
     cd zshelf  
     cp * $ZDOTDIR/.zfunc/
@@ -79,7 +79,7 @@ done
     #This comes after compinit:
     compdef _qlm qlm
     ```
-Please, check the bottom of supplied `.zshrc` for configuration related to this tool set.
+Please, check the top and bottom of supplied `.zshrc` for configuration related to this tool set.
 All the response aliases/functions are defined in the config file qlm.cfg.
 
 ## Usage
@@ -88,7 +88,7 @@ All the response aliases/functions are defined in the config file qlm.cfg.
 
 ```bash
 ❯❯qlm <TAB>[ModelName] ["Prompt"]
-❯❯qlm [-lammacli_opts --if_any -- ] <TAB>[ModelName] ["Prompt"]
+❯❯qlm -<TAB>[-lammacli_opts --if_any -- ] <TAB>[ModelName] ["Prompt"]
 ❯❯#Continue the same conversation (possibly with a new model):
 ❯❯reqlm <TAB>[ModelName] ["New Prompt"]
 
@@ -129,7 +129,7 @@ Their response aliases (defined in `qlm.cfg` as anon. functions): `reqwec`, `req
 
 ### Context Building with `promf`
 
-The `promf` helper populates the temporary prompt file (`$TPROMPTF`):
+The `promf` helper function populates the temporary prompt file (`$TPROMPTF`):
 
 ```bash
 # Append content to the prompt file
