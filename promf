@@ -1,0 +1,30 @@
+# $ZDOTDIR/.zfunc/promf
+#Prompt manipulation function for Zshelf.
+#`promf filename` OR `promf 'Some text'` OR `promf` OR `promf l` OR `promf X`, where X is any single character different from 'l' or 'c'
+#Append a file  OR Append some text OR append selected text OR list directory contents OR show file contents OR delete file 
+#promf () {
+#Adjust the next variable for your case:
+
+local size_limit=175000  # 175kB in bytes, average file size for 131072 tokens.
+(( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
+if (( $# )); then
+    if [[ -f $1 ]]; then
+        cat "$1" >> $TPROMPTF
+    elif (( $#1 - 1 )); then
+        echo -e $1 >> $TPROMPTF
+    else
+        [[ $1 == "l" ]] && { ls -al "${TPROMPTF:h}" ; return 0 ; }
+        [[ $1 == "c" ]] && { cat $TPROMPTF ; return 0 ; }
+        rm $TPROMPTF
+    fi
+else
+    echo -e "$(xsel -op)\n" >> $TPROMPTF
+fi
+if [[ -f $TPROMPTF ]]; then
+    local file_size=$(stat -c%s "$TPROMPTF")
+    if (( file_size > size_limit )); then
+        echo "WARNING: Please, check that $TPROMPTF does not exceed the maximum context window of your model!"
+    fi
+fi
+return 0
+#}
