@@ -1,18 +1,165 @@
 #function _qlm {
-#Completion function for qlm. After autoloading qlm and _qlm:
-#Do not forget to `compdef _qlm qlm` to register this completion function
+#After autoloading qlm and _qlm:
+#Do not forget to `compdef _qlm qlm` to register the completion function
 #The Large language model names and filenames are declared in qlm.cfg
-#Supports TAB completion on `qlm <TAB>...` or `qlm [-[-]{llama-cli override options} --] <TAB>...`
-  
+#Supports TAB completion on `qlm <TAB>...` or `qlm -<TAB>{llama-cli override options} -- <TAB>...`
+#The completion will switch between options and model name before " -- " and only complete model name after.
+   
 if (( ! ${+llmodels} )); then 
     source $ZDOTDIR/.zfunc/qlm.cfg
 fi
 local llms=(${(k)llmodels})
-if (( CURRENT == 2 )) || ( (( CURRENT > 2 )) && [[ "${words[CURRENT-1]}" == "--" ]] ); then
+if ( (( CURRENT == 2 )) && [[ "${words[CURRENT]}" != -* ]] ) || ( (( CURRENT > 2 )) && [[ "${words[CURRENT-1]}" == "--" ]] ); then
   # If the current word is the second word, or one following '--', provide completions from the array
   compadd -S '' -M 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' "${llms[@]}"
 else
-  # For other words, allow any completion
-  _default
+  if [[ ${${words[1,CURRENT-1]}[(Ie)--]} == 0 ]] && [[ "${words[CURRENT]}" == -* ]]; then
+    # Define the options list
+    local options=(
+      -- 
+      -t --threads
+      -tb --threads-batch
+      -C --cpu-mask
+      -Cr --cpu-range
+      --cpu-strict
+      --prio
+      --poll
+      -Cb --cpu-mask-batch
+      -Crb --cpu-range-batch
+      --cpu-strict-batch
+      --prio-batch
+      --poll-batch
+      -c --ctx-size
+      -n --predict -n-predict
+      -b --batch-size
+      -ub --ubatch-size
+      --keep
+      -fa --flash-attn
+      -p --prompt
+      --no-perf
+      -f --file
+      -bf --binary-file
+      -e --escape
+      --no-escape
+      --rope-scaling
+      --rope-scale
+      --rope-freq-base
+      --rope-freq-scale
+      --yarn-orig-ctx
+      --yarn-ext-factor
+      --yarn-attn-factor
+      --yarn-beta-slow
+      --yarn-beta-fast
+      -dkvc --dump-kv-cache
+      -nkvo --no-kv-offload
+      -ctk --cache-type-k
+      -ctv --cache-type-v
+      -dt --defrag-thold
+      -np --parallel
+      --mlock
+      --no-mmap
+      --numa
+      -dev --device
+      --list-devices
+      -ngl --gpu-layers -n-gpu-layers
+      -sm --split-mode
+      -ts --tensor-split
+      -mg --main-gpu
+      --check-tensors
+      --override-kv
+      --lora
+      --lora-scaled
+      --control-vector
+      --control-vector-scaled
+      --control-vector-layer-range
+      -m --model
+      -mu --model-url
+      -hf
+      -hfr --hf-repo
+      -hfd -hfrd --hf-repo-draft
+      -hff --hf-file
+      -hfv -hfrv --hf-repo-v
+      -hffv --hf-file-v
+      -hft --hf-token
+      --log-disable
+      --log-file
+      --log-colors
+      -v --verbose
+      --log-verbose
+      -lv --verbosity
+      --log-verbosity
+      --log-prefix
+      --log-timestamps
+      --samplers
+      -s --seed
+      --sampling-seq
+      --sampler-seq
+      --ignore-eos
+      --logit-bias
+      --temp
+      --top-k
+      --top-p
+      --min-p
+      --top-nsigma
+      --xtc-probability
+      --xtc-threshold
+      --typical
+      --repeat-last-n
+      --repeat-penalty
+      --presence-penalty
+      --frequency-penalty
+      --dry-multiplier
+      --dry-base
+      --dry-allowed-length
+      --dry-penalty-last-n
+      --dry-sequence-breaker
+      --dynatemp-range
+      --dynatemp-exp
+      --mirostat
+      --mirostat-lr
+      --mirostat-ent
+      -l --logit-bias
+      --grammar
+      --grammar-file
+      -j --json-schema
+      --no-display-prompt
+      -co --color
+      --no-context-shift
+      -sys --system-prompt
+      -ptc --print-token-count
+      --prompt-cache
+      --prompt-cache-all
+      --prompt-cache-ro
+      -r --reverse-prompt
+      -sp --special
+      -cnv --conversation
+      -no-cnv --no-conversation
+      -st --single-turn
+      -i --interactive
+      -if --interactive-first
+      -mli --multiline-input
+      --in-prefix-bos
+      --in-prefix
+      --in-suffix
+      --no-warmup
+      -gan --grp-attn-n
+      -gaw --grp-attn-w
+      --jinja
+      --reasoning-format
+      --chat-template
+      --chat-template-file
+      --simple-io
+    )
+    if [[ "${words[CURRENT]}" == "-" ]]; then
+        # Suggest single hyphen options
+        compadd -S '' -M 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' "${options[@]/#--/}"
+    else
+        # Suggest double hyphen options
+        compadd -S '' -M 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' "${options[@]}"
+    fi
+  else
+    # For other words, allow any completion
+    _default
+  fi
 fi
 #}
