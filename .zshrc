@@ -75,10 +75,10 @@ function precmd() {
 # You can CTRL-click on it to edit the LLM prompt (when flashing) 
   local hexcode=$(( $RANDOM %2 ? $((RANDOM % 1259 + 127744)) : $((RANDOM % 244 + 129291)) ))
   hexcode=$(printf %X "$hexcode")  
+  local prchar='❯'  
   if [[ -s $TPROMPTF ]]; then 
-      HEXLINK="$(printf "\e]8;;file:$TPROMPTF\e\\")"
-      HEXLINK+=$(printf "\e[5m$(printf "\U$hexcode")\e[0m")
-      HEXLINK+=$(printf "\e]8;;\e\\")
+      prchar='⏺'
+      HEXLINK="$(printf "\e]8;;file:$TPROMPTF\e\\$(printf "\U$hexcode")\e]8;;\e\\")"
   else
       HEXLINK="$(printf "\e]8;;https://codepoints.net/U+$hexcode\e\\$(printf "\U$hexcode")\e]8;;\e\\")"
   fi    
