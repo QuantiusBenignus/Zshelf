@@ -1,4 +1,8 @@
 # ~/.zshrc
+#My sample .zshrc optimized for speed (< 6.5 ms startup time and some unique functionality)
+#Aside from the next line, settings related to Zshelf are all at the end of this file in case the rest of the .zshrc is of no interest.  
+export ZDOTDIR="${ZDOTDIR:-$HOME}" #Needed for Zshelf setup.
+
 timbit=$(date "+%s%4N")
 #zmodload zsh/zprof
 
@@ -17,13 +21,10 @@ export HISTFILE="$ZDOTDIR/.zsh_history"
 export HISTSIZE=10000
 export SAVEHIST=10000
 
-#This is for the LLM functions:
-export ZDOTDIR="${ZDOTDIR:-$HOME}"
-
 #The next is an aggressive reduction in the elements of fpath, where entries have been removed as not needed.
 #Trim you fpath only if you are sure that you are not using functions from the directories removed from the fpath array.  
 #fpath=(
-#$HOME/.config/zsh/.zfunc /usr/share/zsh/vendor-completions
+#$ZDOTDIR/.zfunc /usr/share/zsh/vendor-completions
 #/usr/share/zsh/functions/Chpwd 
 #/usr/share/zsh/functions/Completion /usr/share/zsh/functions/Completion/Base 
 #/usr/share/zsh/functions/Completion/Debian /usr/share/zsh/functions/Completion/Linux 
@@ -123,11 +124,13 @@ else
    compinit -C
 fi
 
+#This block is for the LLM functions:
 fpath=($ZDOTDIR/.zfunc $fpath)
 #Those are the LLM manipulation functions
-autoload -Uz qlm _qlm reqlm
+autoload -Uz qlm _qlm reqlm promf
 autoload -Uz gem gem2 qwen qwec mist deeq
 #Register the LLM name completion (must be after compinit)
 compdef _qlm qlm
+
 
 #zprof
