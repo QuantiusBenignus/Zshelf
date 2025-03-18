@@ -1,6 +1,7 @@
 #Function qwec, dedicated to Qwen2.5-Coder-14B-Instruct-Q5_K_L model
 #Usage: `qwec [-some llama-cli_opts --more llamacli_opts -- ] "Command-line Prompt"`
 #qwec () {
+    (( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
     local posit=${argv[(Ie)--]}
     if (( $posit )); then
        local llamacli_opts=${argv:1:$posit-1} 
