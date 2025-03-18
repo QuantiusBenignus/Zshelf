@@ -1,6 +1,7 @@
 #Function mist, dedicated to Mistral-Small-24B-Instruct-2501-IQ4_XS model
 #Usage: `mist [-some llama-cli_opts --more llamacli_opts -- ] "Command-line Prompt"`
 #mist () {
+    (( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
     local posit=${argv[(Ie)--]}
     if (( $posit )); then
        local llamacli_opts=${argv:1:$posit-1} 
