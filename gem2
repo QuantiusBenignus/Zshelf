@@ -1,6 +1,7 @@
 #Function gem2, dedicated to Gemma-2-2b-it-Q6_K_L model
 #Usage: `gem2 [-some llama-cli_opts --more llama-cli_opts -- ] "Command-line Prompt"`
 #gem2 () {
+    (( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
     local posit=${argv[(Ie)--]}
     if (( $posit )); then
        local llamacli_opts=${argv:1:$posit-1} 
