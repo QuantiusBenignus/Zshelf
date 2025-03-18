@@ -1,6 +1,7 @@
 #Function deeq, dedicated to DeepSeek-R1-Distill-Qwen-14B-Q5_K_L model
 #Usage: `deeq [-some llama-cli opts --more llamacli -- ] "Command-line Prompt"`
-#deeq () {
+#deeq () {    
+    (( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
     local posit=${argv[(Ie)--]}
     if (( $posit )); then
        local llamacli_opts=${argv:1:$posit-1} 
