@@ -39,20 +39,20 @@ local maxlayers=$gpulayers[$choice]
 
 #Dynamic adjustment of layers to offload (down, by not more then 7) if VRAM is tied up (only NVIDIA gpus for now)
 if [[ $maxlayers -lt 99 ]]; then
-    local memory=$(nvidia-smi --query-gpu=memory.free,memory.used,memory.reserved,memory.total --format=csv,nounits,noheader)
-    memory=(${(s:, :)memory})
+    local memory=$(nvidia-smi --query-gpu=memory.free --format=csv,nounits,noheader)
     local load=(${(P)choice})
     for lay in {$maxlayers..$(( maxlayers-7 ))}; do
-        [[ $memory[1] -gt $load[$lay] ]] && { maxlayers=$lay ; lay=0 ; break ; }
+        [[ $memory -gt $load[$lay] ]] && { maxlayers=$lay ; lay=0 ; break ; }
     done
     (( $lay )) && { echo "Insufficient VRAM, please free some. LLM run will be slow, exiting..." ; return 1 ; }      
 fi
 #End Dynamic adj.....
 
 echo -n "${choice}" > $lastllmf 
-echo "${choice}:"
+echo "${choice}: $maxlayers layers offloaded."
 local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
-(( 2 - ${#funcstack} )) && echo -e "User:\n${userinput}\nAssistant:" > /dev/shm/reqlm
+#(( 2 - ${#funcstack} )) && 
+echo -e "User:\n${userinput}\nAssistant:" > /dev/shm/reqlm
 
 #The local inference engine (defined above) must be in the PATH.
 #The 'UIUIUI' placeholder is used to keep config in a single file, that is sourced on startup.
