@@ -71,8 +71,8 @@ function precmd() {
   else
       elapsed=${$(printf "%.1fms\n" "$((elapsed / 10.))")#-}
   fi
-# Random RPROMPT link emoji to codepoint URL OR to the LLM prompt file $TPROMPTF if not empty (when flashing ).   
-# You can CTRL-click on it to edit the LLM prompt (when flashing) 
+# Random RPROMPT link emoji to codepoint URL OR to the LLM prompt file $TPROMPTF if not empty (indicator ⏺ in PROMPT).   
+# You can CTRL-click on link to edit the LLM prompt in $TPROMPTF (when PROMPT has ⏺) 
   local hexcode=$(( $RANDOM %2 ? $((RANDOM % 1259 + 127744)) : $((RANDOM % 244 + 129291)) ))
   hexcode=$(printf %X "$hexcode")  
   local prchar='❯'  
