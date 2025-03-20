@@ -52,7 +52,7 @@ echo -n "${choice}" > $lastllmf
 echo "${choice}: $maxlayers layers offloaded."
 local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
 #(( 2 - ${#funcstack} )) && 
-echo -e "User:\n${userinput}\nAssistant:" > /dev/shm/reqlm
+echo -e "\n${userinput}\n" > /dev/shm/reqlm
 
 #The local inference engine (defined above) must be in the PATH.
 #The 'UIUIUI' placeholder is used to keep config in a single file, that is sourced on startup.
