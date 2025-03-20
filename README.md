@@ -64,11 +64,11 @@ The second, optional form is when the user wants to add or override `llama-cli` 
 
 | Input Type | Example | Behavior |
 |---------------------|----------------------------------|--------------------------------------------------------------------------|
-| **No arguments** | `qlm` | Uses default model (e.g. Gemma3-12B) + clipboard/prompt file/context |
+| **No arguments** | `qlm` | Uses default model (e.g. Gemma3-12B) + clipboard/prompt file/context* |
 | **Only prompt** | `qlm "Explain relativity"` | Default model + given prompt |
 | **Model + prompt** | `qlm Gemma2-9B "Write a poem"` | Specific model + given prompt |
-| **Clipboard input** | `qlm` (with selected text) | Uses selected text as prompt |
-
+| **Clipboard input** | `qlm` (with selected text) | Uses selected text as prompt* |
+|||\* If no command-line prompt, qlm will enter conversation mode|
 ### Dedicated Model Commands
 
 Pre-configured for specific, frequently-used models (use without model names):
@@ -97,16 +97,11 @@ The `promf` helper function populates the temporary prompt file (`$TPROMPTF`):
 
 ```bash
 # Append content to the prompt file
-❯❯promf file.txt
-# From a file
-❯❯promf "Custom instruction"
-# Direct input
-❯❯promf
-# From mouse-selected text (via xsel)
-❯❯promf l 
-#list contents of prompt file directory
-❯❯promf c 
-#display contents of prompt file
+❯❯promf file.txt   # From a file
+❯❯promf "Custom instruction"  # Direct input
+❯❯promf            # From mouse-selected text (via xsel)
+❯❯promf l          #list contents of prompt file directory
+❯❯promf c          #display contents of prompt file
 
 ❯❯promf 0 #or any other single character different from 'l' or 'c'
 #delete temporary prompt file
