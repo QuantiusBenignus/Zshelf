@@ -1,6 +1,6 @@
 [Zshelf](https://github.com/quantiusbenignus/zshelf) is a Zsh-centric command-line interface for interacting with local Large Language Models (LLMs) using [llama.cpp](https://github.com/ggml-org/llama.cpp). It supports context persistence, model switching, and advanced prompt workflows, ingesting from the command line, files and mouse-selected text in any window. 
 
-Unique to this setup is the ability to have an itermittent one-shot conversations outside the isolated bubble of the lamma.cpp conversation mode: 
+Unique to this setup is the ability to have an intermittent one-shot conversations outside the isolated bubble of the lamma.cpp conversation mode: 
 
 ```
 ❯❯ mist 'Given the csv file sample I showed you, write a python function to convert it to binary format using the python struct.pack().
