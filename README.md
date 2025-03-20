@@ -44,7 +44,8 @@ done
 - **Context Persistence**: Conversations saved in `/dev/shm/re*` files for resuming later with the same (or new, with reqlm)  model.
 - **Flexible Input**: Prompts can come from command line, files, clipboard, or can be constructed using `promf`.
 - **Model-Specific Prompts**: Each model has optimized (overrideable) system instructions (see preset values in qlm.cfg).
-
+- **NEW: Dynamic maximization of GPU-offloaded model layers**: Based on currently free VRAM (NVIDIA only, may require extra setup)
+  
 ## Installation & Setup
 
 ### Requirements:
@@ -82,6 +83,14 @@ done
 Please, check the top and bottom of supplied `.zshrc` for configuration related to this tool set.
 All the response aliases/functions are defined in the config file qlm.cfg.
 
+3. **Configure dynamic adjustment of N in -ngl N for models that do not fit in the GPU VRAM**:
+   
+   If using the dynamic (based on `nvidia-smi` output) maximization of GPU-offloaded layers for models that DO NOT fit in your GPU:
+   - Check if the `qml.cfg` file (last block) contains an array with the VRAM loads (indexed by the # of offloaded layers) for your specific model.
+   - If not, such an array needs to be setup, either using the helper script `gpulayers.zsh` or manually/ via other means.
+   - The comments of the last block of qlm.cfg contain a suggestion how to mock up such an array to effectively disable this feature for a specifc model. 
+When properly setup, this feature will allow some flexibility and will maximize the number of layers offloaded to the GPU for maximum possible performance in the specific VRAM situation. (An example scenario is having a resident whisper.cpp server listening for [speech recognition](https://github.com/QuantiusBenignus/BlahST) and occupying about 400MB of VRAM on the GPU, in which case the number of offloaded layers when running an LLM with Zshelf,will be reduced by 1 or 2 automatically.)
+   
 ## Usage
 
 ### Core Command: `qlm` (Model-Agnostic)
