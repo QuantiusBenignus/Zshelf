@@ -35,6 +35,20 @@ else
    local choice="$defaultlm"
 fi
 
+local maxlayers=$gpulayers[$choice]
+
+#Dynamic adjustment of layers to offload (down, by not more then 7) if VRAM is tied up (only NVIDIA gpus for now)
+if [[ $maxlayers -lt 99 ]]; then
+    local memory=$(nvidia-smi --query-gpu=memory.free,memory.used,memory.reserved,memory.total --format=csv,nounits,noheader)
+    memory=(${(s:, :)memory})
+    local load=(${(P)choice})
+    for lay in {$maxlayers..$(( maxlayers-7 ))}; do
+        [[ $memory[1] -gt $load[$lay] ]] && { maxlayers=$lay ; lay=0 ; break ; }
+    done
+    (( $lay )) && { echo "Insufficient VRAM, please free some. LLM run will be slow, exiting..." ; return 1 ; }      
+fi
+#End Dynamic adj.....
+
 echo -n "${choice}" > $lastllmf 
 echo "${choice}:"
 local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
@@ -42,7 +56,8 @@ local userinput="${1:-$(cat $TPROMPTF 2>/dev/null || xsel -op)}"
 
 #The local inference engine (defined above) must be in the PATH.
 #The 'UIUIUI' placeholder is used to keep config in a single file, that is sourced on startup.
-$inferengine -t 8 --temp $temps[$choice] -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf --no-warmup -c $ctxsize[$choice] -ngl $gpulayers[$choice] -s $(date +%s) ${1:+-no-cnv} -m $LLMDIR/$llmodels[$choice] -p "${llmprompts[$choice]//UIUIUI/"${userinput}"}" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/reqlm
+#GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 
+$inferengine -t 8 --temp $temps[$choice] -fa --top-p 0.95 -mli --no-mmap --mlock --no-display-prompt --no-perf ${1:+--no-warmup} -c $ctxsize[$choice] -ngl $maxlayers -s $(date +%s) ${1:+-no-cnv} -m $LLMDIR/$llmodels[$choice] -p "${llmprompts[$choice]//UIUIUI/"${userinput}"}" ${(z)llamacli_opts} 2>/dev/null | tee -a /dev/shm/reqlm
 
 #}
 
