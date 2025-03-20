@@ -28,12 +28,12 @@ done
 ## Table of Contents
 
 - [Features](#features)
-- [Installation & Setup](#installation--setup)
 - [Usage](#usage)
   - [Core Command: `qlm`](#core-command-qlm)
   - [Dedicated Model Commands](#dedicated-model-commands)
   - [Context Building with `promf`](#context-building-with-promf)
   - [Conversation Continuation](#conversation-continuation)
+- [Installation & Setup](#installation--setup)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
@@ -46,51 +46,6 @@ done
 - **Model-Specific Prompts**: Each model has optimized (overrideable) system instructions (see preset values in qlm.cfg).
 - **NEW: Dynamic maximization of GPU-offloaded model layers**: Based on currently free VRAM (NVIDIA only, may require extra setup)
   
-## Installation & Setup
-
-### Requirements:
-- Zsh (configured with `compinit` for the TAB completion of model names and options.)
-- [llama.cpp](https://github.com/ggml-org/llama.cpp) (`llam`/`llama-cli` in PATH)
-- `xsel` (or `wl-copy` on Wayland) for clipboard access (`sudo apt install xsel` on Linux)
-
-### Steps:
-
-1. **Place files in Zsh function path**:
-    ```zsh
-    git clone https://github.com/QuantiusBenignus/Zshelf.git
-    export ZDOTDIR=${ZDOTDIR:-$HOME}
-    mkdir -p $ZDOTDIR/.zfunc   
-    cd zshelf  
-    cp * $ZDOTDIR/.zfunc/
-    ```
-
-2. **Configure `.zshrc`**:
-    ```zsh
-    #It would be best to set ZDOTDIR in your ~/.zshenv
-    if [[ -z "$ZDOTDIR" ]]; then
-        export ZDOTDIR="$HOME"
-    fi
-
-    fpath=($ZDOTDIR/.zfunc $fpath)
-    # Enables model name completion
-    
-    # Autoload functions and completion
-    autoload -Uz qlm _qlm promf reqlm qwec qwen gem gem2 deeq mist 
-
-    #This comes after compinit:
-    compdef _qlm qlm
-    ```
-Please, check the top and bottom of supplied `.zshrc` for configuration related to this tool set.
-All the response aliases/functions are defined in the config file qlm.cfg.
-
-3. **Configure dynamic adjustment of N in -ngl N for models that do not fit in the GPU VRAM**:
-   
-   If using the dynamic (based on `nvidia-smi` output) maximization of GPU-offloaded layers for models that DO NOT fit in your GPU:
-   - Check if the `qml.cfg` file (last block) contains an array with the VRAM loads (indexed by the # of offloaded layers) for your specific model.
-   - If not, such an array needs to be setup, either using the helper script `gpulayers.zsh` or manually/ via other means.
-   - The comments of the last block of qlm.cfg contain a suggestion how to mock up such an array to effectively disable this feature for a specifc model. 
-When properly setup, this feature will allow some flexibility and will maximize the number of layers offloaded to the GPU for maximum possible performance in the specific VRAM situation. (An example scenario is having a resident whisper.cpp server listening for [speech recognition](https://github.com/QuantiusBenignus/BlahST) and occupying about 400MB of VRAM on the GPU, in which case the number of offloaded layers when running an LLM with Zshelf,will be reduced by 1 or 2 automatically.)
-   
 ## Usage
 
 ### Core Command: `qlm` (Model-Agnostic)
@@ -109,7 +64,7 @@ The second, optional form is when the user wants to add or override `llama-cli` 
 
 | Input Type | Example | Behavior |
 |---------------------|----------------------------------|--------------------------------------------------------------------------|
-| **No arguments** | `qlm` | Uses default model (Qwen-14B) + clipboard/prompt file/context |
+| **No arguments** | `qlm` | Uses default model (e.g. Gemma3-12B) + clipboard/prompt file/context |
 | **Only prompt** | `qlm "Explain relativity"` | Default model + given prompt |
 | **Model + prompt** | `qlm Gemma2-9B "Write a poem"` | Specific model + given prompt |
 | **Clipboard input** | `qlm` (with selected text) | Uses selected text as prompt |
@@ -178,6 +133,51 @@ Use `reqlm` or model-specific aliases to continue previous sessions:
 ❯❯reqwec "Next coding task?"
 ```
 
+## Installation & Setup
+
+### Requirements:
+- Zsh (configured with `compinit` for the TAB completion of model names and options.)
+- [llama.cpp](https://github.com/ggml-org/llama.cpp) (`llam`/`llama-cli` in PATH)
+- `xsel` (or `wl-copy` on Wayland) for clipboard access (`sudo apt install xsel` on Linux)
+
+### Steps:
+
+1. **Place files in Zsh function path**:
+    ```zsh
+    git clone https://github.com/QuantiusBenignus/Zshelf.git
+    export ZDOTDIR=${ZDOTDIR:-$HOME}
+    mkdir -p $ZDOTDIR/.zfunc   
+    cd zshelf  
+    cp * $ZDOTDIR/.zfunc/
+    ```
+
+2. **Configure `.zshrc`**:
+    ```zsh
+    #It would be best to set ZDOTDIR in your ~/.zshenv
+    if [[ -z "$ZDOTDIR" ]]; then
+        export ZDOTDIR="$HOME"
+    fi
+
+    fpath=($ZDOTDIR/.zfunc $fpath)
+    # Enables model name completion
+    
+    # Autoload functions and completion
+    autoload -Uz qlm _qlm promf reqlm qwec qwen gem gem2 deeq mist 
+
+    #This comes after compinit:
+    compdef _qlm qlm
+    ```
+Please, check the top and bottom of supplied `.zshrc` for configuration related to this tool set.
+All the response aliases/functions are defined in the config file qlm.cfg.
+
+3. **Configure dynamic adjustment of N in -ngl N for models that do not fit in the GPU VRAM**:
+   
+   If using the dynamic (based on `nvidia-smi` output) maximization of GPU-offloaded layers for models that DO NOT fit in your GPU:
+   - Check if the `qml.cfg` file (last block) contains an array with the VRAM loads (indexed by the # of offloaded layers) for your specific model.
+   - If not, such an array needs to be setup, either using the helper script `gpulayers.zsh` or manually/ via other means.
+   - The comments of the last block of qlm.cfg contain a suggestion how to mock up such an array to effectively disable this feature for a specifc model. 
+When properly setup, this feature will allow some flexibility and will maximize the number of layers offloaded to the GPU for maximum possible performance in the specific VRAM situation. (An example scenario is having a resident whisper.cpp server listening for [speech recognition](https://github.com/QuantiusBenignus/BlahST) and occupying about 400MB of VRAM on the GPU, in which case the number of offloaded layers when running an LLM with Zshelf,will be reduced by 1 or 2 automatically.)
+   
 ## Configuration (qlm.cfg)
 
 Edit `.zfunc/qlm.cfg` to add models and parameters:
