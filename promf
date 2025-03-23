@@ -1,20 +1,29 @@
 # $ZDOTDIR/.zfunc/promf
-#Prompt manipulation function for Zshelf.
-#`promf filename` OR `promf 'Some text'` OR `promf` OR `promf l` OR `promf X`, where X is any single character different from 'l' or 'c'
-#Append a file  OR Append some text OR append selected text OR list directory contents OR show file contents OR delete file 
-#promf () {
-#Adjust the next variable for your case:
+#Prompt manipulation function for Zshelf. Works on file $TPROMPTF.
+#`promf filename`       append a file OR
+#`promf 'Some text'`    append some text OR
+#`promf`                append PRIMARY selection OR
+#`promf l`              list dir contents  OR
+#`promf c`              list $TPROMPTF contents OR
+#`promf e`              edit $TPROMPTF file (for those who do not use the link in $RPROMPT)
+#`promf x`              delete $TPROMPTF (single char x != 'l','c' or 'e')
 
+#promf () {
+#Adjust the next variables for your case:
 local size_limit=175000  # 175kB in bytes, average file size for 131072 tokens.
+#Replace `ne` in next statement with your favorite command-line editor. 
+local editor=${EDITOR:-ne}
+
 (( ${+TPROMPTF} )) || source $ZDOTDIR/.zfunc/qlm.cfg
 if (( $# )); then
     if [[ -f $1 ]]; then
         cat "$1" >> $TPROMPTF
     elif (( $#1 - 1 )); then
-        echo -e $1 >> $TPROMPTF
+        echo -e "$1" >> $TPROMPTF
     else
         [[ $1 == "l" ]] && { ls -al "${TPROMPTF:h}" ; return 0 ; }
         [[ $1 == "c" ]] && { cat $TPROMPTF ; return 0 ; }
+        [[ $1 == "e" ]] && { command $editor $TPROMPTF ; return 0 ; }
         rm $TPROMPTF
     fi
 else
