@@ -21,8 +21,8 @@ for i in {1..$ml}; do
     echo -n "$memvals[2] " >> $filem
     wait $LLAMA_PID
 done
-echo -n ')' > $filem 
-#Assuming this script remains in the same directory as qlm.cfg
+echo -n ')' >> $filem 
+#Assuming this script remains in the same directory as qlm.cfg:
 cat $filem >> qlm.cfg
 
 #The next will work until llama-cli changes the standard output format.
